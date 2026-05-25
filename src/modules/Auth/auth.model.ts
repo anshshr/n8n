@@ -38,6 +38,31 @@ const UserSchema = new Schema(
   {
     timestamps: true,
   },
+)
+
+const RolesSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    modules: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    permissions: {
+      type: [String],
+      required: true,
+      trim: true,
+    },
+  },
+  {
+    timestamps: true,
+  },
 );
 
-export const User = mongoose.model("User", UserSchema);
+export const RoleModel = mongoose.model("Role", RolesSchema);
+export const UserModel = mongoose.model("User", UserSchema);

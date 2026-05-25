@@ -5,7 +5,7 @@ import {
   verifyRefreshToken,
 } from "../../utils/jwt.js";
 import { comparePassword, hashPassword } from "../../utils/password.js";
-import { User } from "./auth.model.js";
+import { UserModel } from "./auth.model.js";
 import type { Role } from "./auth.types.js";
 
 function sanitizeUser(user: {
@@ -29,7 +29,7 @@ function sanitizeUser(user: {
 }
 
 export async function register(name: string, email: string, password: string) {
-  const existingUser = await User.findOne({ email: email.toLowerCase() });
+  const existingUser = await UserModel.findOne({ email: email.toLowerCase() });
 
   if (existingUser) {
     throw new AppError("User with this email already exists", 409);
@@ -37,7 +37,7 @@ export async function register(name: string, email: string, password: string) {
 
   const hashedPassword = await hashPassword(password);
 
-  const user = await User.create({
+  const user = await UserModel.create({
     name,
     email: email.toLowerCase(),
     password: hashedPassword,
@@ -51,7 +51,7 @@ export async function register(name: string, email: string, password: string) {
 }
 
 export async function login(email: string, password: string) {
-  const user = await User.findOne({ email: email.toLowerCase() });
+  const user = await UserModel.findOne({ email: email.toLowerCase() });
 
   if (!user) {
     throw new AppError("Invalid email or password", 401);
@@ -88,7 +88,7 @@ export async function login(email: string, password: string) {
 export async function refresh(refreshToken: string) {
   const payload = verifyRefreshToken(refreshToken);
 
-  const user = await User.findById(payload.userId);
+  const user = await UserModel.findById(payload.userId);
 
   if (!user) {
     throw new AppError("User not found", 404);
@@ -111,7 +111,7 @@ export async function refresh(refreshToken: string) {
 }
 
 export async function logout(userId: string) {
-  const user = await User.findById(userId);
+  const user = await UserModel.findById(userId);
 
   if (!user) {
     throw new AppError("User not found", 404);
@@ -126,7 +126,7 @@ export async function logout(userId: string) {
 }
 
 export async function getMe(userId: string) {
-  const user = await User.findById(userId);
+  const user = await UserModel.findById(userId);
 
   if (!user) {
     throw new AppError("User not found", 404);
@@ -138,7 +138,7 @@ export async function getMe(userId: string) {
 }
 
 export async function updateRole(userId: string, role: Role) {
-  const user = await User.findById(userId);
+  const user = await UserModel.findById(userId);
 
   if (!user) {
     throw new AppError("User not found", 404);
